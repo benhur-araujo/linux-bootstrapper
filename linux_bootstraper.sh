@@ -3,13 +3,16 @@
 # I have 2 computers running Ubuntu 26.04. I'm having a hard time keeping their configs synced.
 # I've created this script to do that for me.
 
-set -exo pipefail
+set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname "$0")" && pwd)"
 readonly SCRIPT_DIR
 
 # source library functions
 source "$SCRIPT_DIR/libs/helpers.sh"
+
+# Default running mode
+is_full_install=false
 
 ########## General System Preferences ###############
 general_configs() {
@@ -28,11 +31,11 @@ net.ipv6.conf.lo.disable_ipv6 = 1
 EOF
 
     # Soft-links
-    ln -s ~/github-projects/ai-workflow/docs ~/.claude/docs
-    ln -s ~/github-projects/ai-workflow/USER-CLAUDE.md ~/.claude/CLAUDE.md
-    ln -s ~/github-projects/ai-workflow/skills ~/.claude/skills
-    ln -s ~/github-projects/ai-workflow/statusline-command.sh ~/.claude/statusline-command.sh
-    ln -s ~/github-projects/ai-workflow/settings.json ~/.claude/settings.json
+    ln -sfn ~/github-projects/ai-workflow/docs ~/.claude/docs
+    ln -sfn ~/github-projects/ai-workflow/USER-CLAUDE.md ~/.claude/CLAUDE.md
+    ln -sfn ~/github-projects/ai-workflow/skills ~/.claude/skills
+    ln -sfn ~/github-projects/ai-workflow/statusline-command.sh ~/.claude/statusline-command.sh
+    ln -sfn ~/github-projects/ai-workflow/settings.json ~/.claude/settings.json
 
     # Keep session manager running when I'm not logged in
     sudo loginctl enable-linger "$USER"
@@ -187,7 +190,7 @@ install_external_apps() {
     fi
 
     # Terragrunt
-    if ! has_command terragrunt || $is_full_install ]]; then
+    if ! has_command terragrunt || $is_full_install; then
         curl -sSfL --proto '=https' --tlsv1.2 https://terragrunt.com/install | bash
         log "terragrunt installed"
     else
@@ -216,7 +219,7 @@ install_external_apps() {
     fi
 
     # ArgoCD CLI
-    if has_command argocd || $is_full_install; then
+    if ! has_command argocd || $is_full_install; then
         local argocd_version="$(curl --silent "https://api.github.com/repos/argoproj/argo-cd/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')"
         curl -sSL -o /tmp/argocd-${argocd_version} https://github.com/argoproj/argo-cd/releases/download/${argocd_version}/argocd-linux-amd64
         chmod +x /tmp/argocd-${argocd_version}
@@ -226,7 +229,7 @@ install_external_apps() {
     fi
     
     # MiniKube
-    if ! has_command kubelogin || $is_full_install; then
+    if ! has_command minikube || $is_full_install; then
         curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
         sudo install minikube-linux-amd64 /usr/local/bin/minikube
         rm minikube-linux-amd64
@@ -237,7 +240,6 @@ install_external_apps() {
     # Helm
     if ! has_command helm || $is_full_install; then
         curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-        helm completion zsh | sudo tee "${fpath[1]}/_helm" > /dev/null
     else
         log "helm already installed"
     fi
@@ -434,4 +436,4 @@ main() {
     log -e "\n##### Finished! ######"
 }
 
-main "$1"
+main "$@"
