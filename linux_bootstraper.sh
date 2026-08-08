@@ -96,12 +96,12 @@ add_apt_repos() {
 
 ########## Install APT Packages ##########
 install_dependencies() {
-    sudo apt update -y > /dev/null 2>&1
+    sudo apt update -y > /dev/null
     sudo apt install -y \
         curl \
         wget \
         gpg \
-        software-properties-common > /dev/null 2>&1
+        software-properties-common > /dev/null
 }
 
 install_apt_apps() {
@@ -110,6 +110,7 @@ install_apt_apps() {
               code xdotool chrome-gnome-shell gnome-browser-connector xclip gh shellcheck ansible bat zoxide python3-pip pre-commit openconnect nmap glow python3.14-venv python3-tk pgadmin4-desktop 1password-cli)
 
     log "### APT Packages ###"
+    sudo apt update -y > /dev/null
     sudo apt install -y "${apt_apps[@]}" > /dev/null 2>&1
     log "### Installed Packages ###"
     log "${apt_apps[@]}"
@@ -129,7 +130,7 @@ install_external_apps() {
     fi
 
     # Oh My Zsh
-    if [[ ! -d ~/.oh-my-zsh || $is_full_install ]]; then
+    if [[ ! -d ~/.oh-my-zsh ]] || $is_full_install; then
         rm -rf ~/.oh-my-zsh
         curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -o install.sh
         sed -i '/exec\ zsh\ -l/d' install.sh
@@ -142,7 +143,8 @@ install_external_apps() {
 
     # asdf
     if ! has_command asdf || $is_full_install; then
-        local asdf_latest_version="$(git ls-remote --tags --sort=v:refname https://github.com/asdf-vm/asdf.git | awk -F"/" '{print $3}'| tail -1)"
+        local asdf_latest_version
+        asdf_latest_version="$(git ls-remote --tags --sort=v:refname https://github.com/asdf-vm/asdf.git | awk -F"/" '{print $3}'| tail -1)"
         rm -rf ~/.asdf
         git clone -q https://github.com/asdf-vm/asdf.git ~/.asdf --branch "$asdf_latest_version" > /dev/null 2>&1
         log "asdf Installed"
@@ -210,7 +212,8 @@ install_external_apps() {
     
     # K9S
     if ! has_command k9s || $is_full_install; then
-        local k9s_latest_version="$(git ls-remote --tags --sort=v:refname https://github.com/derailed/k9s.git | awk -F"/" '{print $3}'| tail -1 | sed 's/\^{}//')"
+        local k9s_latest_version
+        k9s_latest_version="$(git ls-remote --tags --sort=v:refname https://github.com/derailed/k9s.git | awk -F"/" '{print $3}'| tail -1 | sed 's/\^{}//')"
         wget -q https://github.com/derailed/k9s/releases/download/"$k9s_latest_version"/k9s_linux_amd64.deb
         sudo apt install ./k9s_linux_amd64.deb > /dev/null 2>&1
         rm k9s_linux_amd64.deb
@@ -220,10 +223,11 @@ install_external_apps() {
 
     # ArgoCD CLI
     if ! has_command argocd || $is_full_install; then
-        local argocd_version="$(curl --silent "https://api.github.com/repos/argoproj/argo-cd/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')"
-        curl -sSL -o /tmp/argocd-${argocd_version} https://github.com/argoproj/argo-cd/releases/download/${argocd_version}/argocd-linux-amd64
-        chmod +x /tmp/argocd-${argocd_version}
-        sudo mv /tmp/argocd-${argocd_version} /usr/local/bin/argocd
+        local argocd_version
+        argocd_version="$(curl --silent "https://api.github.com/repos/argoproj/argo-cd/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')"
+        curl -sSL -o "/tmp/argocd-${argocd_version}" "https://github.com/argoproj/argo-cd/releases/download/${argocd_version}/argocd-linux-amd64"
+        chmod +x "/tmp/argocd-${argocd_version}"
+        sudo mv "/tmp/argocd-${argocd_version} /usr/local/bin/argocd"
     else
         log "ArgoCD CLI already installed"
     fi
@@ -239,13 +243,29 @@ install_external_apps() {
 
     # Helm
     if ! has_command helm || $is_full_install; then
-        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+        curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
     else
         log "helm already installed"
     fi
 
     # Claude CLI
-    curl -fsSL https://claude.ai/install.sh | bash
+    if ! has_command || $is_full_install; then
+        curl -fsSL https://claude.ai/install.sh | bash
+    fi
+
+    # Microsoft Teams
+    if ! has_command teams-for-linux || $is_full_install; then
+        curl -fsSL https://repo.teamsforlinux.de/install.sh | sudo bash
+        sudo install -D -m 644 "$SCRIPT_DIR/configs/etc/teams-for-linux/config.json" \
+            /etc/teams-for-linux/config.json
+    fi
+    
+    # 1Password
+    if ! has_command 1password || $is_full_install; then
+        curl -fsSL -o /tmp/onepassword.deb https://downloads.1password.com/linux/debian/amd64/stable/1password-latest.deb
+        sudo apt install /tmp/onepassword.deb -y > /dev/null
+        log "1Password installed"
+    fi
 }
 
 
@@ -254,10 +274,11 @@ install_external_apps() {
 config_apps() {
     log -e "\n### Apply Apps configs ###"
     # Tilix as default
-    echo "com.gexperts.Tilix.desktop" > .config/ubuntu-xdg-terminals.list
+    echo "com.gexperts.Tilix.desktop" > ~/.config/ubuntu-xdg-terminals.list
 
     # Tilix appearance
-    local tilix_profile="$(gsettings get com.gexperts.Tilix.ProfilesList default | tr -d "'")"
+    local tilix_profile
+    tilix_profile="$(gsettings get com.gexperts.Tilix.ProfilesList default | tr -d "'")"
     dconf write /com/gexperts/Tilix/profiles/"$tilix_profile"/background-transparency-percent "20"
     dconf write /com/gexperts/Tilix/profiles/"$tilix_profile"/default-size-columns "140"
     dconf write /com/gexperts/Tilix/profiles/"$tilix_profile"/default-size-rows "40"
@@ -297,8 +318,8 @@ config_apps() {
     if [[ ! -d ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]]; then
         git clone -q https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
         log "zsh-autosuggestions Installed"
-    elif [[ -d ~/.oh-my-zsh/plugins/zsh-autosuggestions && $is_full_install ]]; then
-        rm -rf ~/.oh-my-zsh/plugins/zsh-autosuggestions
+    elif [[ -d ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions && $is_full_install ]]; then
+        rm -rf ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
         git clone -q https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
         log "zsh-autosuggestions Updated"
     else
@@ -413,7 +434,8 @@ gnome_extensions() {
         rm extension.zip
     done
 
-    local user_extensions=($(gnome-extensions list --user))
+    local user_extensions
+    user_extensions=("$(gnome-extensions list --user)")
     for extension in "${user_extensions[@]}"; do
         gnome-extensions enable "$extension"
         log "$extension installed"

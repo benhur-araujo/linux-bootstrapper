@@ -1,0 +1,7 @@
+{
+    "auth": {
+	"reauthRecovery": {
+	    "enabled": true
+	}
+    }
+}
