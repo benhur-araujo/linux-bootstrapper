@@ -1,104 +1,138 @@
-## Linux Bootstrapper
-This script is designed to help keep configurations synchronized between computers running Ubuntu 26.04, or to configure the system after a fresh O.S installation.
+# Linux Bootstrapper
 
-### Usage
+This script keeps the configuration in sync between computers that run
+Ubuntu 26.04. You can also use it to configure the system after a new
+installation of the operating system.
+
+## Usage
+
 ```bash
 git clone https://github.com/benhur-araujo/linux-bootstrapper.git
 cd linux-bootstrapper
-./linux_bootstrapper.sh --full  # Install or update everything, and apply configs
-./linux_bootstrapper.sh --diff  # Install only missing packages, and apply configs (default)
+./linux_bootstrapper.sh --full  # Install or update all, and apply the configs
+./linux_bootstrapper.sh --diff  # Install only the missing packages (default)
 ```
-Running the script with no argument is equivalent to `--diff`. Any other argument prints the usage and exits.
 
-### Repository layout
+If you give no argument, the script does the same as `--diff`. For all other
+arguments, the script prints the usage and stops.
+
+## Repository layout
+
+```text
+linux_bootstrapper.sh                 # Entry point: all install/config steps
+libs/helpers.sh                       # has_command, parse_args, usage, log
+configs/vimrc                         # Copied to ~/.vimrc
+configs/zshrc                         # Copied to ~/.zshrc
+configs/teams-for-linux/              # Copied to /etc/teams-for-linux/
+configs/claude/CLAUDE.md              # Soft-linked to ~/.claude/
+configs/claude/settings.json          # Soft-linked to ~/.claude/
+configs/claude/statusline-command.sh  # Soft-linked to ~/.claude/
+configs/claude/docs/                  # Soft-linked to ~/.claude/docs
 ```
-linux_bootstrapper.sh              # Entry point: all install/config steps
-libs/helpers.sh                   # has_command, get_opt, usage, log
-configs/vimrc                     # Copied to ~/.vimrc
-configs/zshrc                     # Copied to ~/.zshrc
-configs/etc/teams-for-linux/      # Copied to /etc/teams-for-linux/
-```
-The script resolves its own directory, so it can be invoked from anywhere, but it must be run from a clone because it copies files out of `configs/`.
 
-### Features
-#### General system preferences
-- Add current `$USER` to the sudoers file (passwordless sudo)
-- Laptop lid behavior - ignore when closing it
-- Disable IPv6 via `/etc/sysctl.d`
-- Enable lingering (`loginctl enable-linger`) so user services keep running while logged out
-- Create `~/.claude` soft-links to the `ai-workflow` project (docs, CLAUDE.md, skills, settings.json, statusline-command.sh)
+## Features
 
-#### Bootstrap dependencies
-Installed first, before any repository is added: `curl`, `wget`, `gpg`, `software-properties-common`.
+### General system preferences
 
-#### Add APT Repositories
+- Add the current `$USER` to the sudoers file (sudo with no password)
+- Laptop lid behavior - ignore when you close it
+- Disable IPv6 with `/etc/sysctl.d`
+- Enable lingering (`loginctl enable-linger`), thus the user services
+  continue to run when you are not logged in
+
+### APT repositories
+
 - pgAdmin: PostgreSQL admin tool APT repository
 - Terraform: HashiCorp Terraform APT repository
 - VSCode: Visual Studio Code APT repository
 - GitHub CLI: GitHub CLI APT repository
 - Glow: Charm CLI markdown renderer APT repository
-- 1Password: 1Password APT repository, including the debsig verification policy and keyring
+- 1Password: 1Password APT repository, with the debsig policy and keyring
 
-#### APT Packages Installations
+### APT packages
+
 - vim-gtk3, tree, git: Essential tools
-- zsh, bash-completion: Shell enhancements
+- zsh, bash-completion: Shell improvements
 - flameshot: Screenshot tool
 - tilix: Terminal emulator
 - jq, yq, gnupg, code, gh, shellcheck, bat, glow, pre-commit: Dev tools
 - ansible, terraform: IaC tools
-- apt-transport-https: APT package for secure package handling
+- apt-transport-https: APT package for safe package operations
 - xdotool, chrome-gnome-shell, gnome-browser-connector, xclip, zoxide
-- openconnect, nmap: Networking tools
-- python3-pip, python3.14-venv, python3-tk: Python tooling
+- openconnect, nmap: Network tools
+- python3-pip, python3.14-venv, python3-tk: Python tools
 - pgadmin4-desktop: PostgreSQL admin desktop client
 - 1password-cli: 1Password command-line tool
 
-#### Non-Package Managed Installations
+### Installations that APT does not manage
+
 - Google Chrome: Web browser
 - Oh My Zsh: Zsh configuration framework
-- asdf: Version manager for multiple runtime languages (latest tag)
+- asdf: Version manager for many runtime languages (latest tag)
 - kubectl: Kubernetes command-line tool
-- Docker: Containerization platform (adds `$USER` to the `docker` group)
-- AZURE CLI: Microsoft Azure command-line tool
-- Kubelogin: A Kubernetes credential (exec) plugin implementing Azure authentication
+- Docker: Container platform (adds `$USER` to the `docker` group)
+- Azure CLI: Microsoft Azure command-line tool
+- Kubelogin: Kubernetes credential (exec) plugin for Azure authentication
 - Terragrunt: Wrapper for Terraform
-- Terraform-docs: Documentation generator for Terraform modules (pinned to v0.17.0)
+- Terraform-docs: Documentation generator for Terraform modules (v0.17.0)
 - K9S: Kubernetes cluster TUI (latest release)
 - ArgoCD CLI: Argo CD command-line tool (latest release)
 - Minikube: Local Kubernetes cluster
 - Helm: Kubernetes package manager
 - Claude CLI: Anthropic Claude Code CLI
-- Microsoft Teams: teams-for-linux, plus `/etc/teams-for-linux/config.json` enabling auth reauth recovery
+- Microsoft Teams: teams-for-linux, with `/etc/teams-for-linux/config.json`
+  that enables the auth reauth recovery
 - 1Password: 1Password desktop application
+- uv: Python package and project manager
 
-#### Packages Configurations
-- Tilix: Set as default terminal, appearance tweaks (transparency, size, font), and custom keybindings for sessions, tabs, paging and zoom
-- Vim: `configs/vimrc` copied to `~/.vimrc` (vim-plug bootstrap with `context.vim`, 4-space indentation, relative numbers, system clipboard), plus the `vim-terraform` plugin cloned into `~/.vim/pack/plugins/start`
-- Zsh: `configs/zshrc` copied to `~/.zshrc` (robbyrussell theme with a custom prompt, kubectl/general aliases, az/aws/terragrunt/helm completions), plus the zsh-autosuggestions, zsh-syntax-highlighting and kubectl-autocomplete plugins under `~/.oh-my-zsh/custom/plugins`
+### Package configurations
+
+- Tilix: Set as the default terminal, appearance changes (transparency,
+  size, font), and keybindings for sessions, tabs, paging and zoom
+- Vim: `configs/vimrc` copied to `~/.vimrc` (vim-plug with `context.vim`,
+  4-space indentation, relative numbers, system clipboard), and the
+  `vim-terraform` plugin cloned into `~/.vim/pack/plugins/start`
+- Zsh: `configs/zshrc` copied to `~/.zshrc` (robbyrussell theme with a
+  custom prompt, kubectl and general aliases, az/aws/terragrunt/helm
+  completions), and the zsh-autosuggestions, zsh-syntax-highlighting and
+  kubectl-autocomplete plugins in `~/.oh-my-zsh/custom/plugins`
 - Git: Global user name and email
+- Claude Code: `configs/claude` soft-linked into `~/.claude`
+  (`CLAUDE.md`, `settings.json`, `statusline-command.sh`, `docs`)
 
-#### Gnome Preferences
+### Gnome preferences
+
 - Ubuntu Dock settings
-- Show battery percentage
-- Never auto-suspend (on battery or AC)
-- Remove trash from the Ubuntu dock
-- Manage Windows & Workspaces settings (4 fixed workspaces, custom switch/move shortcuts)
+- Show the battery percent
+- Never suspend automatically (on battery or AC)
+- Permit a speaker volume more than 100%
+- Remove the trash from the Ubuntu dock
+- Windows and workspaces settings (4 fixed workspaces, custom switch and
+  move shortcuts)
 - Custom shortcuts for Bluetooth, Flameshot, Mute Mic, and Sound Settings
-- Change default shortcuts (Home, switch-applications, screenshot UI)
-- Disable Desktop Icons NG (DING) extension
+- Changes to the default shortcuts (Home, switch-applications,
+  screenshot UI)
+- Disable the Desktop Icons NG (DING) extension
 
-#### Gnome Extensions
-Downloaded from `extensions.gnome.org` at URLs pinned to a specific extension version, installed, then every user extension is enabled.
+### Gnome extensions
 
 - Clipboard History
 - Notification Counter
 - Dash to Panel
 - Space Bar
 
-### Notes
-- This script assumes Ubuntu 26.04 as the operating system. Some package names are release-specific (for example `python3.14-venv`).
-- `sudo` is required. The first `sudo` call prompts for a password; afterwards `$USER` is granted passwordless sudo.
-- The `~/.claude` soft-links expect `~/.claude` to exist and `~/github-projects/ai-workflow` to be cloned.
-- Personal values are hardcoded and should be changed before running on another account: the git `user.name`/`user.email` in `linux_bootstrapper.sh`, and the `PATH` entries and script aliases in `configs/zshrc`.
-- Log out and back in after the first run so the `docker` group membership and the zsh default shell take effect.
-- Make sure to review and customize the script based on your requirements.
+## Notes
+
+- The script is for Ubuntu 26.04. Some package names are related to the
+  release, for example `python3.14-venv`.
+- You must have `sudo`. The first `sudo` command asks for a password. After
+  that, `$USER` can use sudo with no password.
+- The Claude Code soft-links point to the clone directory and need
+  `~/.claude` to exist. Do not move or delete the clone after a run.
+- Personal values are in the code. Change them before you run the script
+  with a different account: the git `user.name` and `user.email` in
+  `linux_bootstrapper.sh`, and the `PATH` entries and the script aliases in
+  `configs/zshrc`.
+- Log out and log in again after the first run, thus the `docker` group
+  membership and the zsh default shell become effective.
+- Examine the script and change it for your requirements.
