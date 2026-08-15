@@ -1,18 +1,18 @@
-## Linux Bootstraper
+## Linux Bootstrapper
 This script is designed to help keep configurations synchronized between computers running Ubuntu 26.04, or to configure the system after a fresh O.S installation.
 
 ### Usage
 ```bash
-git clone https://github.com/benhur-araujo/linux-bootstraper.git
-cd linux-bootstraper
-./linux_bootstraper.sh --full  # Install or update everything, and apply configs
-./linux_bootstraper.sh --diff  # Install only missing packages, and apply configs (default)
+git clone https://github.com/benhur-araujo/linux-bootstrapper.git
+cd linux-bootstrapper
+./linux_bootstrapper.sh --full  # Install or update everything, and apply configs
+./linux_bootstrapper.sh --diff  # Install only missing packages, and apply configs (default)
 ```
 Running the script with no argument is equivalent to `--diff`. Any other argument prints the usage and exits.
 
 ### Repository layout
 ```
-linux_bootstraper.sh              # Entry point: all install/config steps
+linux_bootstrapper.sh              # Entry point: all install/config steps
 libs/helpers.sh                   # has_command, get_opt, usage, log
 configs/vimrc                     # Copied to ~/.vimrc
 configs/zshrc                     # Copied to ~/.zshrc
@@ -99,6 +99,6 @@ Downloaded from `extensions.gnome.org` at URLs pinned to a specific extension ve
 - This script assumes Ubuntu 26.04 as the operating system. Some package names are release-specific (for example `python3.14-venv`).
 - `sudo` is required. The first `sudo` call prompts for a password; afterwards `$USER` is granted passwordless sudo.
 - The `~/.claude` soft-links expect `~/.claude` to exist and `~/github-projects/ai-workflow` to be cloned.
-- Personal values are hardcoded and should be changed before running on another account: the git `user.name`/`user.email` in `linux_bootstraper.sh`, and the `PATH` entries and script aliases in `configs/zshrc`.
+- Personal values are hardcoded and should be changed before running on another account: the git `user.name`/`user.email` in `linux_bootstrapper.sh`, and the `PATH` entries and script aliases in `configs/zshrc`.
 - Log out and back in after the first run so the `docker` group membership and the zsh default shell take effect.
 - Make sure to review and customize the script based on your requirements.

@@ -30,13 +30,6 @@ net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
 EOF
 
-    # Soft-links
-    ln -sfn ~/github-projects/ai-workflow/docs ~/.claude/docs
-    ln -sfn ~/github-projects/ai-workflow/USER-CLAUDE.md ~/.claude/CLAUDE.md
-    ln -sfn ~/github-projects/ai-workflow/skills ~/.claude/skills
-    ln -sfn ~/github-projects/ai-workflow/statusline-command.sh ~/.claude/statusline-command.sh
-    ln -sfn ~/github-projects/ai-workflow/settings.json ~/.claude/settings.json
-
     # Keep session manager running when I'm not logged in
     sudo loginctl enable-linger "$USER"
 }
@@ -249,14 +242,14 @@ install_external_apps() {
     fi
 
     # Claude CLI
-    if ! has_command || $is_full_install; then
+    if ! has_command claude || $is_full_install; then
         curl -fsSL https://claude.ai/install.sh | bash
     fi
 
     # Microsoft Teams
     if ! has_command teams-for-linux || $is_full_install; then
         curl -fsSL https://repo.teamsforlinux.de/install.sh | sudo bash
-        sudo install -D -m 644 "$SCRIPT_DIR/configs/etc/teams-for-linux/config.json" \
+        sudo install -D -m 644 "$SCRIPT_DIR/configs/teams-for-linux/config.json" \
             /etc/teams-for-linux/config.json
     fi
     
@@ -265,6 +258,12 @@ install_external_apps() {
         curl -fsSL -o /tmp/onepassword.deb https://downloads.1password.com/linux/debian/amd64/stable/1password-latest.deb
         sudo apt install /tmp/onepassword.deb -y > /dev/null
         log "1Password installed"
+    fi
+
+    # Python UV
+    if ! has_command uv || $is_full_install; then
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        log "Python UV installed"
     fi
 }
 
@@ -316,11 +315,11 @@ config_apps() {
 
     # ZSH
     if [[ ! -d ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]]; then
-        git clone -q https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+        git clone -q https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
         log "zsh-autosuggestions Installed"
     elif [[ -d ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions && $is_full_install ]]; then
         rm -rf ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-        git clone -q https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+        git clone -q https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
         log "zsh-autosuggestions Updated"
     else
         log "zsh-autosuggestions already installed"
@@ -356,6 +355,13 @@ config_apps() {
     # Git
     git config --global user.email "benhur.araujo.silva@gmail.com"
     git config --global user.name "benhur-araujo"
+
+    # Claude Code
+    ln -sfn "$SCRIPT_DIR/configs/claude/docs" ~/.claude/docs
+    ln -sfn "$SCRIPT_DIR/configs/claude/CLAUDE.md" ~/.claude/CLAUDE.md
+    ln -sfn "$SCRIPT_DIR/configs/claude/skills" ~/.claude/skills
+    ln -sfn "$SCRIPT_DIR/configs/claude/statusline-command.sh" ~/.claude/statusline-command.sh
+    ln -sfn "$SCRIPT_DIR/configs/claude/settings.json" ~/.claude/settings.json
 }
 
 ########## Gnome Settings ##########
@@ -374,6 +380,8 @@ gnome_settings() {
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
 
+    # Allow speaker above 100%
+    gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
 
     # Remove trash from dock
     gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false
@@ -434,8 +442,8 @@ gnome_extensions() {
         rm extension.zip
     done
 
-    local user_extensions
-    user_extensions=("$(gnome-extensions list --user)")
+    local -a user_extensions
+    readarray -t user_extensions < <(gnome-extensions list --user)
     for extension in "${user_extensions[@]}"; do
         gnome-extensions enable "$extension"
         log "$extension installed"

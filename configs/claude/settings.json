@@ -1,0 +1,46 @@
+{
+  "permissions": {
+    "deny": [
+      "EnterPlanMode",
+      "ExitPlanMode",
+      "DesignSync",
+      "NotebookEdit",
+      "SendMessage",
+      "PushNotification",
+      "RemoteTrigger",
+      "ReportFindings",
+      "ScheduleWakeup",
+      "AskUserQuestion",
+      "CronCreate",
+      "CronDelete",
+      "CronList"
+    ],
+    "defaultMode": "auto"
+  },
+  "model": "claude-opus-5",
+  "disableBundledSkills": true,
+  "disableWorkflows": true,
+  "disableArtifact": true,
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "platform@procuro-tools": true,
+    "mattpocock-skills@claude-plugins-official": true,
+    "dev-flow@procuro-tools": true
+  },
+  "extraKnownMarketplaces": {
+    "procuro-tools": {
+      "source": {
+        "source": "github",
+        "repo": "Procuro-Inc/pdp-claude-plugins"
+      },
+      "autoUpdate": true
+    }
+  },
+  "effortLevel": "medium",
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark"
+}
