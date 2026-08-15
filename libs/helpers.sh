@@ -14,8 +14,8 @@ EOF
     exit 1
 }
 
-# Get script option from the user
-get_opt() {
+# Read the run mode from the script arguments
+parse_args() {
     case $1 in
         --full)
             is_full_install=true;;

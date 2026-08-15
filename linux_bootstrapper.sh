@@ -15,7 +15,7 @@ source "$SCRIPT_DIR/libs/helpers.sh"
 is_full_install=false
 
 ########## General System Preferences ###############
-general_configs() {
+configure_system() {
     # Add current user to sudoers file
     echo "%$USER ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/"$USER" > /dev/null
     echo "$USER added to sudoers file"
@@ -34,8 +34,8 @@ EOF
     sudo loginctl enable-linger "$USER"
 }
 
-########## Add APT Repositories ###########
-add_apt_repos() {
+########## Add APT Sources ###########
+add_apt_sources() {
     # pgAdmin
     if [[ ! -f /usr/pgadmin4/bin/pgadmin4 ]]; then
         curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /etc/apt/keyrings/packages-pgadmin-org.gpg
@@ -88,7 +88,7 @@ add_apt_repos() {
 
 
 ########## Install APT Packages ##########
-install_dependencies() {
+install_prerequisites() {
     sudo apt update -y > /dev/null
     sudo apt install -y \
         curl \
@@ -97,20 +97,20 @@ install_dependencies() {
         software-properties-common > /dev/null
 }
 
-install_apt_apps() {
-    local apt_apps=(vim-gtk3 tree git zsh bash-completion flameshot tilix jq yq \
+install_apt_packages() {
+    local apt_packages=(vim-gtk3 tree git zsh bash-completion flameshot tilix jq yq \
               gnupg terraform apt-transport-https \
               code xdotool chrome-gnome-shell gnome-browser-connector xclip gh shellcheck ansible bat zoxide python3-pip pre-commit openconnect nmap glow python3.14-venv python3-tk pgadmin4-desktop 1password-cli)
 
     log "### APT Packages ###"
     sudo apt update -y > /dev/null
-    sudo apt install -y "${apt_apps[@]}" > /dev/null 2>&1
+    sudo apt install -y "${apt_packages[@]}" > /dev/null 2>&1
     log "### Installed Packages ###"
-    log "${apt_apps[@]}"
+    log "${apt_packages[@]}"
 }
 
 ########## Non-package manager Installations ##########
-install_external_apps() {
+install_non_apt_apps() {
     log -e "\n### Non-APT Packages ###"
 
     # Google Chrome
@@ -270,7 +270,7 @@ install_external_apps() {
 
 
 ########## Configure Applications ###########
-config_apps() {
+configure_apps() {
     log -e "\n### Apply Apps configs ###"
     # Tilix as default
     echo "com.gexperts.Tilix.desktop" > ~/.config/ubuntu-xdg-terminals.list
@@ -364,7 +364,7 @@ config_apps() {
 }
 
 ########## Gnome Settings ##########
-gnome_settings() {
+configure_gnome() {
     log -e "\n### Gnome Preferences ###"
     # Ubuntu Dock
     gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false
@@ -425,17 +425,17 @@ gnome_settings() {
     log "Gnome preferences applied"
 }
 
-gnome_extensions() {
+install_gnome_extensions() {
     log -e "\n### Gnome Extensions ###"
 
-    local install_extensions=(
+    local extension_urls=(
         "https://extensions.gnome.org/extension-data/clipboard-historyalexsaveau.dev.v48.shell-extension.zip"
         "https://extensions.gnome.org/extension-data/NotificationCountercoolllsk.v13.shell-extension.zip"
         "https://extensions.gnome.org/extension-data/dash-to-paneljderose9.github.com.v73.shell-extension.zip"
         "https://extensions.gnome.org/extension-data/space-barluchrioh.v37.shell-extension.zip"
     )
 
-    for extension in "${install_extensions[@]}"; do
+    for extension in "${extension_urls[@]}"; do
         wget -qO extension.zip "$extension"
         gnome-extensions install --force extension.zip > /dev/null
         rm extension.zip
@@ -451,17 +451,17 @@ gnome_extensions() {
 
 
 main() {
-    local param="${1:---diff}"
-    get_opt "$param"
-    install_dependencies
+    local mode="${1:---diff}"
+    parse_args "$mode"
+    install_prerequisites
 
-    general_configs
-    add_apt_repos
-    install_apt_apps
-    install_external_apps
-    config_apps
-    gnome_settings
-    gnome_extensions
+    configure_system
+    add_apt_sources
+    install_apt_packages
+    install_non_apt_apps
+    configure_apps
+    configure_gnome
+    install_gnome_extensions
     log -e "\n##### Finished! ######"
 }
 
