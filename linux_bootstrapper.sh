@@ -359,7 +359,6 @@ config_apps() {
     # Claude Code
     ln -sfn "$SCRIPT_DIR/configs/claude/docs" ~/.claude/docs
     ln -sfn "$SCRIPT_DIR/configs/claude/CLAUDE.md" ~/.claude/CLAUDE.md
-    ln -sfn "$SCRIPT_DIR/configs/claude/skills" ~/.claude/skills
     ln -sfn "$SCRIPT_DIR/configs/claude/statusline-command.sh" ~/.claude/statusline-command.sh
     ln -sfn "$SCRIPT_DIR/configs/claude/settings.json" ~/.claude/settings.json
 }
