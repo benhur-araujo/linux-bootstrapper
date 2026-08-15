@@ -171,7 +171,9 @@ install_non_apt_apps() {
     
     # AZURE-CLI
     if ! has_command az || $is_full_install; then
-     	curl -fsSL 'https://azurecliprod.blob.core.windows.net/$root/deb_install.sh' | sudo bash   
+        # The URL contains a literal $root container name. Keep the quotes single.
+        # shellcheck disable=SC2016
+     	curl -fsSL 'https://azurecliprod.blob.core.windows.net/$root/deb_install.sh' | sudo bash
         sudo az aks install-cli > /dev/null 2>&1
         log "az-cli Installed and kubelogin installed"
     else
@@ -194,7 +196,7 @@ install_non_apt_apps() {
 
     # Terraform-docs
     if ! has_command terraform-docs || $is_full_install; then
-        curl -sLo /tmp/terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.17.0/terraform-docs-v0.17.0-$(uname)-amd64.tar.gz
+        curl -sLo /tmp/terraform-docs.tar.gz "https://github.com/terraform-docs/terraform-docs/releases/download/v0.17.0/terraform-docs-v0.17.0-$(uname)-amd64.tar.gz"
         tar -xzf /tmp/terraform-docs.tar.gz -C /tmp
         chmod +x /tmp/terraform-docs
         sudo mv /tmp/terraform-docs /usr/local/bin/terraform-docs
@@ -289,7 +291,7 @@ configure_apps() {
     dconf write /com/gexperts/Tilix/unsafe-paste-alert false
     dconf write /com/gexperts/Tilix/use-tabs true
     for i in {1..9}; do
-        dconf write /com/gexperts/Tilix/keybindings/win-switch-to-session-$i "'<Ctrl>$i'"
+        dconf write /com/gexperts/Tilix/keybindings/win-switch-to-session-"$i" "'<Ctrl>$i'"
     done
     dconf write /com/gexperts/Tilix/keybindings/win-switch-to-previous-session "'<Ctrl><Shift>Tab'"
     dconf write /com/gexperts/Tilix/keybindings/win-switch-to-next-session "'<Ctrl>Tab'"
@@ -326,11 +328,11 @@ configure_apps() {
     fi
     
 	if [[ ! -d ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]]; then
-        git clone -q https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+        git clone -q https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
         log "zsh-syntax-highlighting Installed"
     elif [[ -d ~/.oh-my-zsh/plugins/zsh-syntax-highlighting && $is_full_install ]]; then
         rm -rf ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
-        git clone -q https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+        git clone -q https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
         log "zsh-syntax-highlighting Updated"
     else
         log "zsh-syntax-highlighting already installed"

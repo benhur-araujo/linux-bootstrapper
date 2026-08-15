@@ -14,7 +14,9 @@ EOF
     exit 1
 }
 
-# Read the run mode from the script arguments
+# Read the run mode from the script arguments.
+# is_full_install is declared and read by the script that sources this file.
+# shellcheck disable=SC2034
 parse_args() {
     case $1 in
         --full)
