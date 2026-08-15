@@ -24,12 +24,12 @@ for field in cwd repo_name branch used_tokens; do
   [ "${!field}" = "-" ] && printf -v "$field" '%s' ""
 done
 
-# Makes a token count easier to read, e.g. 3990925 -> 4.0M tokens.
+# Makes a token count easier to read, e.g. 3990925 -> 4.0M.
 humanize_tokens() {
   awk -v n="$1" 'BEGIN {
-    if (n >= 1000000) printf "%.1fM tokens", n/1000000;
-    else if (n >= 1000) printf "%.1fk tokens", n/1000;
-    else printf "%d tokens", n;
+    if (n >= 1000000) printf "%.1fM", n/1000000;
+    else if (n >= 1000) printf "%.1fk", n/1000;
+    else printf "%d", n;
   }'
 }
 
@@ -71,5 +71,5 @@ else
   quota_5h=$(printf '5h: \033[%sm%s%%\033[0m' "$quota_color" "$used_5h")
 fi
 
-printf "\033[1;36m%s\033[0m \033[1;32m(%s)\033[0m \033[1;33mCtx: %s\033[0m %s \033[0;37m[%s]\033[0m \033[1;34m%s\033[0m\n" \
+printf "\033[1;36m%s\033[0m \033[1;32m(%s)\033[0m \033[1;33mctx: %s\033[0m %s \033[0;37m[%s]\033[0m \033[1;34m%s\033[0m\n" \
   "$repo_name" "$branch" "$context_display" "$quota_5h" "$effort" "$model"
