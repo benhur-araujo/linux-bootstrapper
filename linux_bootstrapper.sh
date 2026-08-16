@@ -222,7 +222,7 @@ install_non_apt_apps() {
         argocd_version="$(curl --silent "https://api.github.com/repos/argoproj/argo-cd/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')"
         curl -sSL -o "/tmp/argocd-${argocd_version}" "https://github.com/argoproj/argo-cd/releases/download/${argocd_version}/argocd-linux-amd64"
         chmod +x "/tmp/argocd-${argocd_version}"
-        sudo mv "/tmp/argocd-${argocd_version} /usr/local/bin/argocd"
+        sudo mv "/tmp/argocd-${argocd_version}" /usr/local/bin/argocd
     else
         log "ArgoCD CLI already installed"
     fi
@@ -306,7 +306,7 @@ configure_apps() {
 	if [[ ! -d ~/.vim/pack/plugins/start/vim-terraform ]]; then
 		git clone https://github.com/hashivim/vim-terraform.git ~/.vim/pack/plugins/start/vim-terraform
 		log "vim-terraform installed"
-    elif [[ -d ~/.vim/pack/plugins/start/vim-terraform && $is_full_install ]]; then
+    elif [[ -d ~/.vim/pack/plugins/start/vim-terraform ]] && $is_full_install; then
 		rm -rf ~/.vim/pack/plugins/start/vim-terraform
 		git clone https://github.com/hashivim/vim-terraform.git ~/.vim/pack/plugins/start/vim-terraform
 		log "vim-terraform updated"
@@ -319,7 +319,7 @@ configure_apps() {
     if [[ ! -d ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]]; then
         git clone -q https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
         log "zsh-autosuggestions Installed"
-    elif [[ -d ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions && $is_full_install ]]; then
+    elif [[ -d ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]] && $is_full_install; then
         rm -rf ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
         git clone -q https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
         log "zsh-autosuggestions Updated"
@@ -330,7 +330,7 @@ configure_apps() {
 	if [[ ! -d ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]]; then
         git clone -q https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
         log "zsh-syntax-highlighting Installed"
-    elif [[ -d ~/.oh-my-zsh/plugins/zsh-syntax-highlighting && $is_full_install ]]; then
+    elif [[ -d ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]] && $is_full_install; then
         rm -rf ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
         git clone -q https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
         log "zsh-syntax-highlighting Updated"
@@ -342,7 +342,7 @@ configure_apps() {
         mkdir -p ~/.oh-my-zsh/custom/plugins/kubectl-autocomplete
         kubectl completion zsh > ~/.oh-my-zsh/custom/plugins/kubectl-autocomplete/kubectl-autocomplete.plugin.zsh
         log "kubectl-autocomplete installed"
-    elif [[ -d ~/.oh-my-zsh/custom/plugins/kubectl-autocomplete && $is_full_install ]]; then
+    elif [[ -d ~/.oh-my-zsh/custom/plugins/kubectl-autocomplete ]] && $is_full_install; then
         rm -rf ~/.oh-my-zsh/custom/plugins/kubectl-autocomplete
         mkdir -p ~/.oh-my-zsh/custom/plugins/kubectl-autocomplete
         kubectl completion zsh > ~/.oh-my-zsh/custom/plugins/kubectl-autocomplete/kubectl-autocomplete.plugin.zsh
