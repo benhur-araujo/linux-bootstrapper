@@ -331,7 +331,7 @@ configure_apps() {
         git clone -q https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
         log "zsh-syntax-highlighting Installed"
     elif [[ -d ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]] && $is_full_install; then
-        rm -rf ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
+        rm -rf ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
         git clone -q https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
         log "zsh-syntax-highlighting Updated"
     else
