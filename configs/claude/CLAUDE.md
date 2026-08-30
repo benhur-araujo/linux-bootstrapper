@@ -1,5 +1,9 @@
 # Global Instructions
 
+## Code style
+
+Follow Clean Code (Robert C. Martin): intention-revealing names; small functions that do one thing; one level of abstraction per function. Public methods read as a narrative of named steps (Stepdown Rule); extract large logic branches into intent-named private methods.
+
 ## Writing Style
 
 **Write all text in ASD-STE100 Simplified Technical English (STE).** This applies to every text you produce: chat replies, documentation, READMEs, code comments, commit messages, PR and issue descriptions, and log or error strings you author.
@@ -52,7 +56,6 @@ Write all Markdown files with this style. Apply the same style to Markdown block
 
 ### Other
 
-- Keep line length below 80 characters where it is possible. Long URLs, tables, and code blocks are permitted to be longer.
 - Use `*` or `_` for emphasis and `**` for strong emphasis. Keep the same characters in all the file.
 - Do not use raw HTML unless the content is not possible in Markdown.
 - Write the text of the first cell of each table row between pipe characters, and give each row the same number of cells.

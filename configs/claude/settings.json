@@ -17,7 +17,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "claude-opus-5",
+  "model": "opus[1m]",
   "disableBundledSkills": true,
   "disableWorkflows": true,
   "disableArtifact": true,
@@ -26,20 +26,25 @@
     "command": "bash ~/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
-    "platform@procuro-tools": true,
     "mattpocock-skills@claude-plugins-official": true,
-    "dev-flow@procuro-tools": true
+    "dev-flow@procuro-tools": true,
+    "platform@procuro-tools": true,
+    "git-ops@procuro-tools": true
   },
   "extraKnownMarketplaces": {
     "procuro-tools": {
       "source": {
         "source": "github",
         "repo": "Procuro-Inc/pdp-claude-plugins"
-      },
-      "autoUpdate": true
+      }
     }
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
+  "modelSettings": {
+    "claude-fable-5": {
+      "effortLevel": "high"
+    }
+  },
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark"
