@@ -29,7 +29,8 @@
     "mattpocock-skills@claude-plugins-official": true,
     "dev-flow@procuro-tools": true,
     "platform@procuro-tools": true,
-    "git-ops@procuro-tools": true
+    "git-ops@procuro-tools": true,
+    "clickup@procuro-tools": true
   },
   "extraKnownMarketplaces": {
     "procuro-tools": {
@@ -47,5 +48,6 @@
   },
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
-  "theme": "dark"
+  "theme": "dark",
+  "editorMode": "vim"
 }

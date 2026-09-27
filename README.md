@@ -21,8 +21,11 @@ arguments, the script prints the usage and stops.
 ```text
 linux_bootstrapper.sh                 # Entry point: all install/config steps
 libs/helpers.sh                       # has_command, parse_args, usage, log
-configs/vimrc                         # Copied to ~/.vimrc
-configs/zshrc                         # Copied to ~/.zshrc
+configs/vim/vimrc                     # Soft-linked to ~/.vimrc
+configs/bash/bashrc                   # Soft-linked to ~/.bashrc
+configs/bash/bash_aliases             # Soft-linked to ~/.bash_aliases
+configs/bash/inputrc                  # Soft-linked to ~/.inputrc
+configs/bash/blerc                    # Soft-linked to ~/.blerc
 configs/teams-for-linux/              # Copied to /etc/teams-for-linux/
 configs/claude/CLAUDE.md              # Soft-linked to ~/.claude/
 configs/claude/settings.json          # Soft-linked to ~/.claude/
@@ -52,7 +55,8 @@ configs/claude/docs/                  # Soft-linked to ~/.claude/docs
 ### APT packages
 
 - vim-gtk3, tree, git: Essential tools
-- zsh, bash-completion: Shell improvements
+- git-delta: Pager for git diffs with changed words highlighted
+- bash-completion: Shell improvements
 - flameshot: Screenshot tool
 - tilix: Terminal emulator
 - jq, yq, gnupg, code, gh, shellcheck, bat, glow, pre-commit: Dev tools
@@ -67,7 +71,8 @@ configs/claude/docs/                  # Soft-linked to ~/.claude/docs
 ### Installations that APT does not manage
 
 - Google Chrome: Web browser
-- Oh My Zsh: Zsh configuration framework
+- ble.sh: Bash line editor for autosuggestions and syntax highlighting
+  (nightly release, in `~/.local/share/blesh`)
 - asdf: Version manager for many runtime languages (latest tag)
 - kubectl: Kubernetes command-line tool
 - Docker: Container platform (adds `$USER` to the `docker` group)
@@ -89,14 +94,17 @@ configs/claude/docs/                  # Soft-linked to ~/.claude/docs
 
 - Tilix: Set as the default terminal, appearance changes (transparency,
   size, font), and keybindings for sessions, tabs, paging and zoom
-- Vim: `configs/vimrc` copied to `~/.vimrc` (vim-plug with `context.vim`,
-  4-space indentation, relative numbers, system clipboard), and the
+- Vim: `configs/vim/vimrc` soft-linked to `~/.vimrc` (vim-plug with
+  `context.vim`, 4-space indentation, relative numbers, system clipboard), and the
   `vim-terraform` plugin cloned into `~/.vim/pack/plugins/start`
-- Zsh: `configs/zshrc` copied to `~/.zshrc` (robbyrussell theme with a
-  custom prompt, kubectl and general aliases, az/aws/terragrunt/helm
-  completions), and the zsh-autosuggestions, zsh-syntax-highlighting and
-  kubectl-autocomplete plugins in `~/.oh-my-zsh/custom/plugins`
-- Git: Global user name and email
+- Bash: `configs/bash/bashrc` (based on the Ubuntu default, with a prompt
+  that shows the full path and the git branch),
+  `configs/bash/bash_aliases`, `configs/bash/inputrc` (vi mode, history
+  search on Up and Down) and `configs/bash/blerc` (ble.sh settings)
+  soft-linked into `~`. The kubectl, `k`, helm and asdf completions are
+  generated into `~/.local/share/bash-completion/completions`
+- Git: Global user name and email, and `delta` as the pager (changed-word
+  highlight, line numbers, side-by-side view)
 - Claude Code: `configs/claude` soft-linked into `~/.claude`
   (`CLAUDE.md`, `settings.json`, `statusline-command.sh`, `docs`)
 
@@ -127,12 +135,14 @@ configs/claude/docs/                  # Soft-linked to ~/.claude/docs
   release, for example `python3.14-venv`.
 - You must have `sudo`. The first `sudo` command asks for a password. After
   that, `$USER` can use sudo with no password.
-- The Claude Code soft-links point to the clone directory and need
-  `~/.claude` to exist. Do not move or delete the clone after a run.
+- The Claude Code, Bash and Vim soft-links point to the clone directory. The
+  Claude Code soft-links also need `~/.claude` to exist. Do not move or delete the clone after a run.
 - Personal values are in the code. Change them before you run the script
   with a different account: the git `user.name` and `user.email` in
   `linux_bootstrapper.sh`, and the `PATH` entries and the script aliases in
-  `configs/zshrc`.
+  `configs/bash/bashrc` and `configs/bash/bash_aliases`.
+- The shell configuration is for Bash only. The script does not change your
+  default shell. If your default shell is not Bash, run `chsh -s /bin/bash`.
 - Log out and log in again after the first run, thus the `docker` group
-  membership and the zsh default shell become effective.
+  membership becomes effective.
 - Examine the script and change it for your requirements.

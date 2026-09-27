@@ -1,0 +1,36 @@
+# Loaded by ~/.bashrc
+
+# Git
+alias ga="git add"
+alias gaa="git add --all"
+alias gc="git commit --verbose"
+alias gd="git diff"
+alias gst="git status"
+
+# Kubernetes
+alias k="kubectl"
+alias kc="kubectl create"
+alias kcc="kubectl config current-context"
+alias ka="kubectl apply -f"
+alias kdel="kubectl delete"
+alias ksx="kubectl config set-context --current --namespace "
+alias kux="kubectl config use-context "
+alias kgx="kubectl config get-contexts"
+alias kg="kubectl get"
+alias kd="kubectl describe"
+
+# General tools
+alias glow="glow -p -w 150"
+alias less="batcat -f --paging=always"
+alias xclip="xclip -sel clip"
+alias claude="claude --model claude-opus-5-5 --effort medium --permission-mode auto"
+
+# Scripts
+alias ct="bash ~/github-projects/bash-scripts/connection-tester/connection-tester.sh"
+alias sup="bash ~/github-projects/bash-scripts/system-updater/system_updater.sh -s"
+alias focus="bash ~/github-projects/bash-scripts/focus-chunker/focus-chunker.sh 40"
+
+# Misc
+# For long running commands.
+alias alert='notify-send --urgency=normal -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+

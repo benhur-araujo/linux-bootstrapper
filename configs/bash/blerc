@@ -1,0 +1,15 @@
+# Show a suggestion from the history while you type. Accept it with Right.
+bleopt complete_auto_complete=1
+
+# Color the command line while you type
+bleopt highlight_syntax=1
+
+# Show directories in the same colors as ls (di=01;34, tw=30;42), with an underline
+ble-face filename_directory=underline,fg=navy,bold
+ble-face filename_directory_sticky=underline,fg=black,bg=green
+
+# Show completion candidates in a grid
+bleopt complete_menu_style=align-nowrap
+
+# Share the history between all open terminals
+bleopt history_share=1

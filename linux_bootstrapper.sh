@@ -98,7 +98,7 @@ install_prerequisites() {
 }
 
 install_apt_packages() {
-    local apt_packages=(vim-gtk3 tree git zsh bash-completion flameshot tilix jq yq \
+    local apt_packages=(vim-gtk3 tree git git-delta bash-completion flameshot tilix jq yq \
               gnupg terraform apt-transport-https \
               code xdotool chrome-gnome-shell gnome-browser-connector xclip gh shellcheck ansible bat zoxide python3-pip pre-commit openconnect nmap glow python3.14-venv python3-tk pgadmin4-desktop 1password-cli)
 
@@ -115,23 +115,25 @@ install_non_apt_apps() {
 
     # Google Chrome
     if ! has_command google-chrome || $is_full_install; then
-        curl -sL -o /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        curl -fsSL -o /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb || {
+            echo "Chrome download failed" >&2
+            exit 1 
+        }
         sudo dpkg -i /tmp/chrome.deb > /dev/null
         log "Chrome Installed"
     else
         log "Chrome already installed"
     fi
 
-    # Oh My Zsh
-    if [[ ! -d ~/.oh-my-zsh ]] || $is_full_install; then
-        rm -rf ~/.oh-my-zsh
-        curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -o install.sh
-        sed -i '/exec\ zsh\ -l/d' install.sh
-        bash install.sh > /dev/null 2>&1
-        log "Oh My Zsh installed"
-        rm install.sh
+    # ble.sh
+    if [[ ! -f ~/.local/share/blesh/ble.sh ]] || $is_full_install; then
+        rm -rf ~/.local/share/blesh
+        curl -fsSL https://github.com/akinomyoga/ble.sh/releases/download/nightly/ble-nightly.tar.xz | tar xJf - -C /tmp
+        bash /tmp/ble-nightly/ble.sh --install ~/.local/share > /dev/null
+        rm -rf /tmp/ble-nightly
+        log "ble.sh installed"
     else
-        log "oh-my-zsh already installed"
+        log "ble.sh already installed"
     fi
 
     # asdf
@@ -302,7 +304,7 @@ configure_apps() {
     log "Tilix Configured"
 
     # vim
-    cp "$SCRIPT_DIR"/configs/vimrc ~/.vimrc
+    ln -sfn "$SCRIPT_DIR/configs/vim/vimrc" ~/.vimrc
 	if [[ ! -d ~/.vim/pack/plugins/start/vim-terraform ]]; then
 		git clone https://github.com/hashivim/vim-terraform.git ~/.vim/pack/plugins/start/vim-terraform
 		log "vim-terraform installed"
@@ -315,54 +317,35 @@ configure_apps() {
 	fi
 	log "Vim configured"
 
-    # ZSH
-    if [[ ! -d ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]]; then
-        git clone -q https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-        log "zsh-autosuggestions Installed"
-    elif [[ -d ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]] && $is_full_install; then
-        rm -rf ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-        git clone -q https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-        log "zsh-autosuggestions Updated"
-    else
-        log "zsh-autosuggestions already installed"
-    fi
-    
-	if [[ ! -d ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]]; then
-        git clone -q https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-        log "zsh-syntax-highlighting Installed"
-    elif [[ -d ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]] && $is_full_install; then
-        rm -rf ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-        git clone -q https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-        log "zsh-syntax-highlighting Updated"
-    else
-        log "zsh-syntax-highlighting already installed"
-    fi   
-	
-    if [[ ! -d ~/.oh-my-zsh/custom/plugins/kubectl-autocomplete ]]; then
-        mkdir -p ~/.oh-my-zsh/custom/plugins/kubectl-autocomplete
-        kubectl completion zsh > ~/.oh-my-zsh/custom/plugins/kubectl-autocomplete/kubectl-autocomplete.plugin.zsh
-        log "kubectl-autocomplete installed"
-    elif [[ -d ~/.oh-my-zsh/custom/plugins/kubectl-autocomplete ]] && $is_full_install; then
-        rm -rf ~/.oh-my-zsh/custom/plugins/kubectl-autocomplete
-        mkdir -p ~/.oh-my-zsh/custom/plugins/kubectl-autocomplete
-        kubectl completion zsh > ~/.oh-my-zsh/custom/plugins/kubectl-autocomplete/kubectl-autocomplete.plugin.zsh
-        log "kubectl-autocomplete Updated"
-    else
-        log "kubectl-autocomplete already installed"
-    fi   
-    
-    cp "$SCRIPT_DIR"/configs/zshrc ~/.zshrc
-    log "Zsh configured"
+    # Bash
+    local bash_completions_dir=~/.local/share/bash-completion/completions
+    mkdir -p "$bash_completions_dir"
+    kubectl completion bash > "$bash_completions_dir/kubectl"
+    { kubectl completion bash; echo "complete -o default -F __start_kubectl k"; } > "$bash_completions_dir/k"
+    helm completion bash > "$bash_completions_dir/helm"
+    asdf completion bash > "$bash_completions_dir/asdf"
+    ln -sfn "$SCRIPT_DIR/configs/bash/bashrc" ~/.bashrc
+    ln -sfn "$SCRIPT_DIR/configs/bash/bash_aliases" ~/.bash_aliases
+    ln -sfn "$SCRIPT_DIR/configs/bash/inputrc" ~/.inputrc
+    ln -sfn "$SCRIPT_DIR/configs/bash/blerc" ~/.blerc
+    log "Bash configured"
 
     # Git
     git config --global user.email "benhur.araujo.silva@gmail.com"
     git config --global user.name "benhur-araujo"
+    git config --global core.pager delta
+    git config --global interactive.diffFilter "delta --color-only"
+    git config --global delta.navigate true
+    git config --global delta.line-numbers true
+    git config --global delta.side-by-side true
+    log "Git configured"
 
     # Claude Code
     ln -sfn "$SCRIPT_DIR/configs/claude/docs" ~/.claude/docs
     ln -sfn "$SCRIPT_DIR/configs/claude/CLAUDE.md" ~/.claude/CLAUDE.md
     ln -sfn "$SCRIPT_DIR/configs/claude/statusline-command.sh" ~/.claude/statusline-command.sh
     ln -sfn "$SCRIPT_DIR/configs/claude/settings.json" ~/.claude/settings.json
+    ln -sfn "$SCRIPT_DIR/configs/claude/keybindings.json" ~/.claude/keybindings.json
 }
 
 ########## Gnome Settings ##########
