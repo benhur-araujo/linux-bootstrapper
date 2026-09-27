@@ -20,7 +20,7 @@ alias kg="kubectl get"
 alias kd="kubectl describe"
 
 # General tools
-alias glow="glow -p -w 150"
+alias glow="glow -p -w 200"
 alias less="batcat -f --paging=always"
 alias xclip="xclip -sel clip"
 alias claude="claude --model claude-opus-5-5 --effort medium --permission-mode auto"

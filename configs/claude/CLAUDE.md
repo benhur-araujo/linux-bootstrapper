@@ -2,15 +2,21 @@
 
 ## Code style
 
-Follow Clean Code (Robert C. Martin): intention-revealing names; small functions that do one thing; one level of abstraction per function. Public methods read as a narrative of named steps (Stepdown Rule); extract large logic branches into intent-named private methods.
+Follow Clean Code (Robert C. Martin): intention-revealing names; small functions that do one thing; one level of abstraction per function.
+Public methods read as a narrative of named steps (Stepdown Rule); extract large logic branches into intent-named private methods.
+
+## Line Length
+
+Wrap all lines at 150 characters. This applies to every file you write: code, comments, documentation, Markdown, configuration.
+
+- Break a line at a word boundary. Do not break a word, a URL, or an inline code span.
+- Keep a line longer than 150 characters only if a break is not possible, for example a long URL or a string literal.
 
 ## Writing Style
 
-**Write all text in ASD-STE100 Simplified Technical English (STE).** This applies to every text you produce: chat replies, documentation, READMEs, code comments, commit messages, PR and issue descriptions, and log or error strings you author.
-
-Apply these rules:
-
-- Use approved STE words only. Keep one meaning per word and one word per meaning: `start`, not `commence`, `initiate`, or `kick off`. Technical names and technical verbs from the project domain stay as they are.
+**Write all text in ASD-STE100 Simplified Technical English (STE).**
+This applies to every text you produce: chat replies, documentation, READMEs, code comments, commit messages, PR and issue descriptions,
+and log or error strings you author.
 
 ## Markdown Files
 
