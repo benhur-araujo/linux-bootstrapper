@@ -102,3 +102,5 @@ eval "$(zoxide init bash)"
 
 # Attach ble.sh last, so that it sees all the settings above
 [[ ! ${BLE_VERSION-} ]] || ble-attach
+
+. "$HOME/.local/bin/env"
