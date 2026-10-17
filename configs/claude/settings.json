@@ -1,12 +1,7 @@
 {
-  "disableBundledSkills": true,
-  "disableWorkflows": true,
-  "enableArtifact": false,
-  "includeGitInstructions": false,
-  "disableClaudeAiConnectors": true,
   "syncClaudeAiSkills": false,
+  "includeGitInstructions": false,
   "permissions": {
-    "defaultMode": "auto",
     "deny": [
       "EnterPlanMode",
       "ExitPlanMode",
@@ -21,7 +16,16 @@
       "CronCreate",
       "CronDelete",
       "CronList"
-    ]
+    ],
+    "defaultMode": "auto"
+  },
+  "disableClaudeAiConnectors": true,
+  "disableBundledSkills": true,
+  "disableWorkflows": true,
+  "enableArtifact": false,
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
     "clickup@synced": false,
@@ -35,9 +39,19 @@
     "cc-plugin-telemetry@builtin": false,
     "cc-plugin-sec-default@builtin": false
   },
-  "statusLine": {
-    "type": "command",
-    "command": "bash ~/.claude/statusline-command.sh"
+  "extraKnownMarketplaces": {
+    "procuro-tools": {
+      "source": {
+        "source": "github",
+        "repo": "Procuro-Inc/pdp-claude-plugins"
+      }
+    },
+    "mattpocock": {
+      "source": {
+        "source": "github",
+        "repo": "mattpocock/skills"
+      }
+    }
   },
   "tui": "fullscreen",
   "autoMemoryEnabled": false,
