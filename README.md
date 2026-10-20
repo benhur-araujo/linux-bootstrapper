@@ -28,6 +28,7 @@ configs/claude/CLAUDE.md              # Soft-linked to ~/.claude/
 configs/claude/settings.json          # Soft-linked to ~/.claude/
 configs/claude/statusline-command.sh  # Soft-linked to ~/.claude/
 configs/claude/docs/                  # Soft-linked to ~/.claude/docs
+configs/claude/skills/                # Soft-linked to ~/.claude/skills
 ```
 
 ## Features
@@ -90,7 +91,7 @@ configs/claude/docs/                  # Soft-linked to ~/.claude/docs
 - Vim: `configs/vim/vimrc` soft-linked to `~/.vimrc` (vim-plug with `context.vim`, 4-space indentation, relative numbers, system clipboard), and the `vim-terraform` plugin cloned into `~/.vim/pack/plugins/start`
 - Bash: `configs/bash/bashrc` (based on the Ubuntu default, with a prompt that shows the full path and the git branch), `configs/bash/bash_aliases`, `configs/bash/inputrc` (vi mode, history search on Up and Down) and `configs/bash/blerc` (ble.sh settings) soft-linked into `~`. The kubectl, `k`, helm and asdf completions are generated into `~/.local/share/bash-completion/completions`
 - Git: Global user name and email, and `delta` as the pager (changed-word highlight, line numbers, side-by-side view)
-- Claude Code: `configs/claude` soft-linked into `~/.claude` (`CLAUDE.md`, `settings.json`, `statusline-command.sh`, `docs`)
+- Claude Code: `configs/claude` soft-linked into `~/.claude` (`CLAUDE.md`, `settings.json`, `statusline-command.sh`, `docs`, `skills`)
 
 ### Gnome preferences
 

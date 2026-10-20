@@ -28,6 +28,7 @@
     "command": "bash ~/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
+    "mattpocock-skills@mattpocock": true,
     "clickup@synced": false,
     "cc-plugin-tips@builtin": false,
     "cc-plugin-diff@builtin": false,
@@ -40,17 +41,12 @@
     "cc-plugin-sec-default@builtin": false
   },
   "extraKnownMarketplaces": {
-    "procuro-tools": {
-      "source": {
-        "source": "github",
-        "repo": "Procuro-Inc/pdp-claude-plugins"
-      }
-    },
     "mattpocock": {
       "source": {
         "source": "github",
         "repo": "mattpocock/skills"
-      }
+      },
+      "autoUpdate": true
     }
   },
   "tui": "fullscreen",
