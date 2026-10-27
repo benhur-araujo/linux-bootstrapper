@@ -66,6 +66,12 @@ Write all Markdown files with this style. Apply the same style to Markdown block
 - Do not use raw HTML unless the content is not possible in Markdown.
 - Write the text of the first cell of each table row between pipe characters, and give each row the same number of cells.
 
+## 1Password
+
+- Do not do 1Password operations yourself. Do not read, create, update, or delete a 1Password item.
+- Do not run the `op` CLI or a different tool that gets access to a 1Password vault.
+- If a task needs a 1Password operation, stop and ask the user to do it. Tell the user which item and which operation the task needs.
+
 ## Git & Version Control
 
 ### Commits
